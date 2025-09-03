@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 1</title>
+    <script>
+        var myCanvas;
+        var sceneList = [];
+        var currentFrameNumber = 0;
+
+        class Rectangle{
+            constructor(x, y, color, velocity){
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.velocity = { x: 0, y: 0 };
+
+                this.update = function (){
+                    this.velocity.y += 1;  
+                    this.y = this.y + this.velocity.y * 0.16;              
+                };
+
+                this.draw = function draw(){ 
+                const ctx = myCanvas.getContext("2d");
+                ctx.fillStyle = color;
+                ctx.fillRect(this.x, this.y, 50, 50);
+                ctx.strokeStyle = "black";
+                ctx.strokeRect(this.x, this.y, 50, 50);
+                }
+
+
+            }
+                
+        }
+
+        function updateAndDraw(){
+            
+            const x = Math.random() * (myCanvas.width);
+            const y = Math.random() * (myCanvas.height);
+            const color = "rgb("    + Math.floor(Math.random() * 256) + "," 
+                                    + Math.floor(Math.random() * 256) + "," 
+                                    + Math.floor(Math.random() * 256) + ")";
+
+            const myRectangle = new Rectangle(x, y, color)
+            sceneList.push(myRectangle);
+
+            const ctx = myCanvas.getContext("2d");
+            ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+
+            currentFrameNumber++;
+
+            for (let i = 0; i < sceneList.length; i++) {
+                sceneList[i].update();
+                sceneList[i].draw();
+            }
+
+            
+            for (let i = sceneList.length - 1; i >= 0; i--) {
+                if (sceneList[i].y > myCanvas.height) {
+                sceneList.splice(i, 1);
+            }
+  }
+
+            currentFrameNumber++;
+            updateStats();
+            requestAnimationFrame(updateAndDraw);
+            
+        }
+        
+        function init(){
+            console.log("Hello World");
+      
+            myCanvas = document.getElementById("myCanvas");
+            updateAndDraw();
+
+        }
+        
+        function updateStats(){
+            var p = document.getElementById("frameCount");
+            p.innerText = "Frame Count: " + currentFrameNumber;
+      
+            var p = document.getElementById("rectangleCount");
+            p.innerText = "Rectangle Count: " + sceneList.length;
+
+        }
+
+    </script>
+</head>
+<body onload="init()">
+    <canvas id="myCanvas" width="300" height="200" style="border:1px solid gray;">
+
+    </canvas>
+    <br><br>
+    <p id = "frameCount">Frame Count: 0</p>
+    <p id = "rectangleCount">Rectangle Count: 0</p>
+
+</body>
+</html>
